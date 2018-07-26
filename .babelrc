@@ -1,0 +1,19 @@
+{
+  "plugins": [
+    "add-module-exports",
+    "transform-runtime"
+  ],
+  "presets": [
+    [
+      "env",
+      {
+        "targets": {
+          "node": "0.8"
+        }
+      }
+    ],
+    [
+      "stage-0"
+    ]
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "name": "wepy-plugin-wxss-url",
+  "version": "1.0.0",
+  "description": "wepy plugin resolve wxss url",
+  "keywords": [
+    "wepy",
+    "wxss"
+  ],
+  "main": "lib/index.js",
+  "repository": "https://github.com/fisker/wepy-plugin-wxss-url",
+  "author": {
+    "name": "fisker Cheung",
+    "email": "lionkay@gmail.com",
+    "url": "https://github.com/fisker"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/fisker/wepy-plugin-wxss-url/issues"
+  },
+  "readmeFilename": "README.md",
+  "scripts": {
+    "precommit": "pretty-quick --staged",
+    "update-dependencies": "yarn upgrade-interactive --latest",
+    "build": "cd ./scripts && sh ./build.sh",
+    "publish-npm": "cd ./scripts && sh ./publish.sh",
+    "release-packages": "npm run build && npm run publish-npm"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-plugin-add-module-exports": "^0.2.1",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-stage-0": "^6.24.1",
+    "mkdirp": "^0.5.1"
+  },
+  "files": [
+    "lib/index.js",
+    "package.json",
+    "README.md",
+    "LICENSE"
+  ],
+  "dependencies": {
+    "babel-runtime": "^6.26.0",
+    "mime": "^2.3.1"
+  }
+}
