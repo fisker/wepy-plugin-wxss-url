@@ -28,7 +28,7 @@ async function processor(data) {
     }
 
     const mimeType = mime.getType(filePath)
-    data.url = `data:${mimeType};base64,${base64Str.toString('base64')}`
+    data.url = `data:${mimeType};base64,${content.toString('base64')}`
   }
 
   return data
