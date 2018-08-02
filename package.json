@@ -1,6 +1,6 @@
 {
   "name": "wepy-plugin-wxss-url",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "wepy plugin resolve wxss url",
   "keywords": [
     "wepy",

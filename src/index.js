@@ -2,7 +2,7 @@ import path from 'path'
 import fs from 'fs'
 import mime from 'mime'
 
-function processor(data) {
+async function processor(data) {
   const {
     file
   } = data
@@ -13,22 +13,47 @@ function processor(data) {
 
 
   if (isFilePath(url)) {
-    const filePath = path.isAbsolute(url)
-      ? path.normalize(url)
+    let filePath = path.isAbsolute(url)
+      ? url
       : path.resolve(path.dirname(file), url)
 
-    let base64Str = ''
+    filePath = path.normalize(filePath)
+
+    let content = ''
+
     try {
-      base64Str = fs.readFileSync(filePath).toString('base64')
+      content = await readFile(filePath, 500)
     } catch (err) {
       return data
     }
 
     const mimeType = mime.getType(filePath)
-    data.url = `data:${mimeType};base64,${base64Str}`
+    data.url = `data:${mimeType};base64,${base64Str.toString('base64')}`
   }
 
   return data
+}
+
+function readFile(file, timeout) {
+  let startTime = Date.now()
+  let content = ''
+  return new Promise((resolve, reject) => {
+    (function readFile() {
+      try {
+        content = fs.readFileSync(file)
+      } catch (err) {}
+
+      if (content.length) {
+        return resolve(content)
+      }
+
+      if (Date.now() - startTime > timeout) {
+        return reject(new Error('timeout'))
+      }
+
+      process.nextTick(readFile)
+    })()
+  })
 }
 
 function isFilePath(url) {
@@ -56,7 +81,7 @@ function protocolRelative(url) {
 function replaceAlias(path, alias) {
   Object.keys(alias).forEach(function(str) {
     if (path.indexOf(str) === 0) {
-      path = alias[str] + path.slice(alias[str].length)
+      path = alias[str] + '/' + path.slice(str.length)
     }
   })
 
@@ -127,6 +152,7 @@ class URLResolver {
       })
     }
 
+    await new Promise(resolve => process.nextTick(resolve)) // delay for dist file ready
     const processed = await Promise.all(urls.map(processor))
 
     processed.forEach(function (url) {
