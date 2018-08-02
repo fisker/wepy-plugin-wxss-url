@@ -3,15 +3,19 @@ import fs from 'fs'
 import mime from 'mime'
 
 function processor(data) {
-  const {file} = data
-  let {url} = data
+  const {
+    file
+  } = data
 
-  if (url[0] === '.' || (url[0] === '/' && url[1] !== '/')) {
-    throw new Error('relative url is not supported. yet.')
-  }
+  let {
+    url
+  } = data
 
-  if (url[0] === '@') {
-    const filePath = path.join(process.cwd(), url.slice(1))
+
+  if (isFilePath(url)) {
+    const filePath = path.isAbsolute(url)
+      ? path.normalize(url)
+      : path.resolve(path.dirname(file), url)
 
     let base64Str = ''
     try {
@@ -27,9 +31,44 @@ function processor(data) {
   return data
 }
 
+function isFilePath(url) {
+  if (protocolRelative(url)) {
+    return false
+  }
+
+  url = url.replace(/\\/g, '/')
+
+  if (path.isAbsolute(url)) {
+    return true
+  }
+
+  if (url[0] === '.' || url[0] === '/') {
+    return true
+  }
+
+  return false
+}
+
+function protocolRelative(url) {
+  return url[0] === '/' && url[1] === '/'
+}
+
+function replaceAlias(path, alias) {
+  Object.keys(alias).forEach(function(str) {
+    if (path.indexOf(str) === 0) {
+      path = alias[str] + path.slice(alias[str].length)
+    }
+  })
+
+  return path
+}
+
 class URLResolver {
   setting = {
-    re: /url\((["']?)(.*?)(\1)\)/g
+    re: /url\((["']?)(.*?)(\1)\)/g,
+    alias: {
+      '@': path.join(process.cwd(), 'src')
+    }
   }
 
   constructor(options = {}) {
@@ -37,10 +76,18 @@ class URLResolver {
   }
 
   async apply(op) {
-    const {re} = this.setting
+    const {
+      re,
+      alias
+    } = this.setting
 
-    const {type, file} = op
-    let {code} = op
+    const {
+      type,
+      file
+    } = op
+    let {
+      code
+    } = op
 
     if (!code || type !== 'css') {
       return op.next()
@@ -69,6 +116,8 @@ class URLResolver {
       let urlSuffix = url.slice(suffixIndex)
       url = url.slice(0, suffixIndex)
 
+      url = replaceAlias(url, alias)
+
       urls.push({
         file: file,
         string: match[0],
@@ -80,7 +129,7 @@ class URLResolver {
 
     const processed = await Promise.all(urls.map(processor))
 
-    processed.forEach(function(url) {
+    processed.forEach(function (url) {
       code = code.replace(url.string, `url(${url.quote}${url.url}${url.suffix}${url.quote})`)
     })
 
