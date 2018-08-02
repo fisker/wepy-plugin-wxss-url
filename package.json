@@ -22,7 +22,7 @@
     "precommit": "pretty-quick --staged",
     "update-dependencies": "yarn upgrade-interactive --latest",
     "build": "cd ./scripts && sh ./build.sh",
-    "publish-npm": "cd ./scripts && sh ./publish.sh",
+    "publish-npm": "npm publish --registry=https://registry.npmjs.org/",
     "release-packages": "npm run build && npm run publish-npm"
   },
   "devDependencies": {

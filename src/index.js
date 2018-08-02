@@ -2,12 +2,16 @@ import path from 'path'
 import fs from 'fs'
 import mime from 'mime'
 
-async function processor(data) {
+function processor(data) {
   const {file} = data
   let {url} = data
 
   if (url[0] === '.' || (url[0] === '/' && url[1] !== '/')) {
-    const filePath = path.resolve(path.dirname(file), url)
+    throw new Error('relative url is not supported. yet.')
+  }
+
+  if (url[0] === '@') {
+    const filePath = path.join(process.cwd(), url.slice(1))
 
     let base64Str = ''
     try {
