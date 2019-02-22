@@ -1128,8 +1128,8 @@ micromatch@^2.1.5:
     regex-cache "^0.4.2"
 
 mime@^2.3.1:
-  version "2.3.1"
-  resolved "http://registry.npm.taobao.org/mime/download/mime-2.3.1.tgz#b1621c54d63b97c47d3cfe7f7215f7d64517c369"
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/mime/-/mime-2.4.0.tgz#e051fd881358585f3279df333fe694da0bcffdd6"
 
 minimatch@^3.0.2, minimatch@^3.0.4:
   version "3.0.4"
